@@ -8,7 +8,7 @@
 
 加密和解密的过程可以指定具体的包名，只加密核心关键部分
 
-详细文章参考：[JVMTI 加密字节码详解](http://127.0.0.1:8080)
+详细文章参考：[JVMTI 加密字节码详解]([http://127.0.0.1:8080](https://mp.weixin.qq.com/s?__biz=MzkzOTQzOTE1NQ==&mid=2247483823&idx=1&sn=a3ae476ccedd2d7fec96e5887989d1c0&chksm=c2f1a4f3f5862de57ce35ebcbf1c39f231ec282934ae8740654be372b1ca4f712c6c101c91e6#rd))
 
 加密后的`Class`文件变成无法解析的畸形文件
 
