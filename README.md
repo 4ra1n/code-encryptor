@@ -18,6 +18,24 @@
 
 ![hex](img/003.png)
 
+## 更新日志
+
+### 0.2
+
+两个重要功能的更新：
+- 支持了`linux`系统
+- 支持了自定义加密密钥
+
+更新日志：
+- 基于`gcc`和`nasm`支持`linux x86_64 (amd64)`
+- 支持`Windows`和`Linux`任意密钥加密解密
+- 使用`execstack`为`so`库修改堆栈可执行属性
+- 汇编中部分寄存器忘记恢复状态导致某些`JVM`崩溃
+- 修复`linux`中字符串处理函数的缓冲区溢出问题
+- 修改`README`部分应该使用`-agentpath`启动
+- 优化重构`Java`层代码，抽出工具类等
+- 避免重复宏定义的问题
+
 ## 特点
 
 本项目相比于网上公开的文章/代码，优势和特点有以下几条：
@@ -78,24 +96,6 @@ java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-ke
 另外支持了简易的`GUI`版本，选择需要加密的`Jar`文件即可一键加密（仅支持`Windows`版）
 
 ![screenshot](img/001.png)
-
-## 更新日志
-
-### 0.2
-
-两个重要功能的更新：
-- 支持了`linux`系统
-- 支持了自定义加密密钥
-
-更新日志：
-- 基于`gcc`和`nasm`支持`linux x86_64 (amd64)`
-- 支持`Windows`和`Linux`任意密钥加密解密
-- 使用`execstack`为`so`库修改堆栈可执行属性
-- 汇编中部分寄存器忘记恢复状态导致某些`JVM`崩溃
-- 修复`linux`中字符串处理函数的缓冲区溢出问题
-- 修改`README`部分应该使用`-agentpath`启动
-- 优化重构`Java`层代码，抽出工具类等
-- 避免重复宏定义的问题
 
 ## 其他
 
