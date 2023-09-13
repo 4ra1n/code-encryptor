@@ -14,19 +14,23 @@ unsigned char **split_string(const char *str, int *num_tokens, const char *sp) {
     char copy[100];
     char *token;
     int count = 0;
-    strncpy(copy, str, sizeof(copy));
+
+    strncpy(copy, str, sizeof(copy) - 1);
     copy[sizeof(copy) - 1] = '\0';
+
     token = strtok(copy, sp);
     while (token != NULL) {
         count++;
         token = strtok(NULL, sp);
     }
+
     tokens = (unsigned char **) malloc(count * sizeof(unsigned char *));
     if (tokens == NULL) {
         fprintf(stderr, "memory allocation failed\n");
         return NULL;
     }
-    strncpy(copy, str, sizeof(copy));
+
+    strncpy(copy, str, sizeof(copy) - 1);
     copy[sizeof(copy) - 1] = '\0';
 
     token = strtok(copy, sp);
@@ -41,11 +45,13 @@ unsigned char **split_string(const char *str, int *num_tokens, const char *sp) {
             free(tokens);
             return NULL;
         }
-        strcpy((char *) tokens[count], token);
+        strncpy((char *) tokens[count], token, strlen(token) + 1);
         count++;
         token = strtok(NULL, sp);
     }
+
     *num_tokens = count;
+
     return tokens;
 }
 

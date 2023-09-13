@@ -67,9 +67,8 @@ JNIEXPORT jbyteArray JNICALL Java_org_y4sec_encryptor_core_CodeEncryptor_encrypt
     }
 
     jbyte *j_tea_key = (*env)->GetByteArrayElements(env, key, NULL);
-    unsigned char *tea_key = (unsigned char *) malloc(17);
+    unsigned char *tea_key = (unsigned char *) malloc(16);
     memcpy(tea_key, j_tea_key, 16);
-    tea_key[17] = '\00';
     printf("KEY: %s\n", tea_key);
 
     // {[10:14],[14:18]}

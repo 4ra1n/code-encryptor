@@ -99,11 +99,11 @@ if (WIN32)
 
     target_link_libraries(decrypt_test
             PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/native_decrypt_asm.obj
-            )
+    )
 
     target_link_libraries(decrypt_test
             PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/native_encrypt_asm.obj
-            )
+    )
 
 else ()
     MESSAGE("THIS IS LINUX")
