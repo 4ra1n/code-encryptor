@@ -4,11 +4,7 @@
 
 使用`JNI`加密字节码，通过`JVMTI`解密字节码以保护代码
 
-提供两份`DLL`文件，一份加密一份解密，实际运行只需使用解密`DLL`文件
-
-加密和解密的过程可以指定具体的包名，只加密核心关键部分
-
-详细文章参考：[JVMTI 加密字节码详解](https://mp.weixin.qq.com/s?__biz=MzkzOTQzOTE1NQ==&mid=2247483823&idx=1&sn=a3ae476ccedd2d7fec96e5887989d1c0&chksm=c2f1a4f3f5862de57ce35ebcbf1c39f231ec282934ae8740654be372b1ca4f712c6c101c91e6#rd)
+提供两份`DLL`文件，一份加密一份解密，实际运行只需使用解密`DLL`文件，支持自定义密钥和包名
 
 加密后的`Class`文件变成无法解析的畸形文件
 
@@ -21,10 +17,6 @@
 ## 更新日志
 
 ### 0.2
-
-两个重要功能的更新：
-- 支持了`linux`系统
-- 支持了自定义加密密钥
 
 更新日志：
 - 基于`gcc`和`nasm`支持`linux x86_64 (amd64)`
@@ -49,17 +41,6 @@
 - 汇编实现的多层位运算，交换字节等
 - 三次`XXTEA`算法，抽取`10-34`位字节
 - 支持自定义密钥
-
-## 构建
-
-编译环境：
-- Windows 11 / Ubuntu 22.04
-- JDK 8 / Maven
-- MSVC + ml64 (Windows) / gcc + nasm (Linux)
-- CMake 3.x
-- Python 3.x
-
-`native`目录使用`cmake`构建，生成`dll`和`so`移动到`resources`中使用`Maven`构建
 
 ## 快速开始
 
@@ -97,6 +78,17 @@ java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-ke
 
 ![screenshot](img/001.png)
 
+## 构建
+
+编译环境：
+- Windows 11 / Ubuntu 22.04
+- JDK 8 / Maven
+- MSVC + ml64 (Windows) / gcc + nasm (Linux)
+- CMake 3.x
+- Python 3.x
+
+`native`目录使用`cmake`构建，生成`dll`和`so`移动到`resources`中使用`Maven`构建
+
 ## 其他
 
 不适用于`SpringBoot`场景，存在两个问题：
@@ -109,7 +101,7 @@ java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-ke
 
 类似地，启动扫描`class`的代码是无法使用这种加密的
 
-## 致谢
+## 参考
 
 感谢以下项目或文章提供的思路：
 - https://juejin.cn/post/6844903487784894477
