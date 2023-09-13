@@ -27,9 +27,10 @@
 - 原文章没有加入具体的加密算法，仅是简单的运算，需要加强
 - 原文章的代码存在一些`BUG`和优化空间
 
-目前的加密解密算法：（可以自行拓展加强）
+目前的加密解密算法：
 - 汇编实现的多层位运算，交换字节等
 - 三次`XXTEA`算法，抽取`10-34`位字节
+- 支持自定义密钥
 
 ## 构建
 
@@ -44,31 +45,57 @@
 
 ## 快速开始
 
-加密解密部分使用`C`做一层加密，使用`汇编`二层加密，已提供编译好的`Release`版本`DLL`文件嵌入`Jar`包中
+加密解密部分使用`C`做一层加密，使用`汇编`二层加密，已提供编译好的`Release`版本`DLL/SO`文件嵌入`Jar`包中
 
-内置支持是`JDK-8`，其他版本的`JDK`只需要更换`JNI.h`头文件重新编译，新版本已支持`Windows`和`Linux`两个操作系统
+内置支持是`JDK-8`，其他版本的`JDK`只需要更换`JNI.h`头文件重新编译，新版本已支持`Windows`和`Linux`
 
-加密你的`Jar`包：（指定`Jar`包和`package`加密包名）
+加密你的`Jar`包：（指定`Jar`包和`package`加密包名以及密钥`key`）
 
 ```shell
- java -jar code-encryptor-plus.jar patch --jar your-jar.jar --package com.your.pack
+ java -jar code-encryptor-plus.jar patch --jar your-jar.jar --package com.your.pack --key your-key
 ```
 
-导出解密`DLL`文件：（默认导出到`code-encryptor-plus-temp`目录）
+![](img/004.png)
+
+导出解密`DLL/SO`文件：（默认导出到`code-encryptor-plus-temp`目录不建议修改）
 
 ```shell
 java -jar code-encryptor-plus.jar export
 ```
 
-使用解密`DLL`启动`Jar`包：（使用`-agentpath`参数）
+![](img/005.png)
+
+使用解密`DLL/SO`启动`Jar`包：（使用`-agentpath`参数）
+
+注意必须有两个参数`PACKAGE_NAME`和`KEY`
 
 ```shell
-java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack --jar your-jar.jar
+java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-key --jar your-jar.jar
 ```
+
+![](img/006.png)
 
 另外支持了简易的`GUI`版本，选择需要加密的`Jar`文件即可一键加密（仅支持`Windows`版）
 
 ![screenshot](img/001.png)
+
+## 更新日志
+
+### 0.2
+
+两个重要功能的更新：
+- 支持了`linux`系统
+- 支持了自定义加密密钥
+
+更新日志：
+- 基于`gcc`和`nasm`支持`linux x86_64 (amd64)`
+- 支持`Windows`和`Linux`任意密钥加密解密
+- 使用`execstack`为`so`库修改堆栈可执行属性
+- 汇编中部分寄存器忘记恢复状态导致某些`JVM`崩溃
+- 修复`linux`中字符串处理函数的缓冲区溢出问题
+- 修改`README`部分应该使用`-agentpath`启动
+- 优化重构`Java`层代码，抽出工具类等
+- 避免重复宏定义的问题
 
 ## 其他
 
