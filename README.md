@@ -1,5 +1,8 @@
 # code-encryptor-plus
 
+[![](https://img.shields.io/github/v/release/Y4Sec-Team/code-encryptor-plus)](https://github.com/Y4Sec-Team/code-encryptor-plus/releases/latest)
+![](https://img.shields.io/github/downloads/Y4Sec-Team/code-encryptor-plus/total)
+
 ## 介绍
 
 使用`JNI`加密字节码，通过`JVMTI`解密字节码以保护代码
