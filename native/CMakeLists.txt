@@ -93,12 +93,18 @@ if (WIN32)
     add_executable(
             decrypt_test
             core_de.h
+            core_en.h
             decrypt_test.c
     )
 
     target_link_libraries(decrypt_test
             PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/native_decrypt_asm.obj
-    )
+            )
+
+    target_link_libraries(decrypt_test
+            PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/native_encrypt_asm.obj
+            )
+
 else ()
     MESSAGE("THIS IS LINUX")
 
@@ -172,6 +178,7 @@ else ()
     add_executable(
             decrypt_test
             core_de.h
+            core_en.h
             decrypt_test.c
     )
 

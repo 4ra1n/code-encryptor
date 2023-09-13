@@ -75,7 +75,7 @@ void JNICALL ClassDecryptHook(
 }
 
 JNIEXPORT void JNICALL Agent_OnUnload(JavaVM *vm) {
-    LOG("UNLOAD AGENT");
+    DE_LOG("UNLOAD AGENT");
 }
 
 JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
@@ -109,7 +109,7 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
     }
 
     if (value == NULL) {
-        LOG("NEED PACKAGE_NAME PARAMS\n");
+        DE_LOG("NEED PACKAGE_NAME PARAMS\n");
         return 0;
     }
 
@@ -121,44 +121,44 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
     printf("PACKAGE-LENGTH: %llu\n", strlen(PACKAGE_NAME));
 
     jvmtiEnv *jvmti;
-    LOG("INIT JVMTI ENVIRONMENT");
+    DE_LOG("INIT JVMTI ENVIRONMENT");
     jint ret = (*vm)->GetEnv(vm, (void **) &jvmti, JVMTI_VERSION);
     if (JNI_OK != ret) {
         printf("ERROR: Unable to access JVMTI!\n");
         printf("PLEASE USE JVM VERSION 8");
         return ret;
     }
-    LOG("INIT JVMTI CAPABILITIES");
+    DE_LOG("INIT JVMTI CAPABILITIES");
     jvmtiCapabilities capabilities;
     (void) memset(&capabilities, 0, sizeof(capabilities));
 
     capabilities.can_generate_all_class_hook_events = 1;
 
-    LOG("ADD JVMTI CAPABILITIES");
+    DE_LOG("ADD JVMTI CAPABILITIES");
     jvmtiError error = (*jvmti)->AddCapabilities(jvmti, &capabilities);
     if (JVMTI_ERROR_NONE != error) {
         printf("ERROR: Unable to AddCapabilities JVMTI!\n");
         return error;
     }
 
-    LOG("INIT JVMTI CALLBACKS");
+    DE_LOG("INIT JVMTI CALLBACKS");
     jvmtiEventCallbacks callbacks;
     (void) memset(&callbacks, 0, sizeof(callbacks));
 
-    LOG("SET JVMTI CLASS FILE LOAD HOOK");
+    DE_LOG("SET JVMTI CLASS FILE LOAD HOOK");
     callbacks.ClassFileLoadHook = &ClassDecryptHook;
     error = (*jvmti)->SetEventCallbacks(jvmti, &callbacks, sizeof(callbacks));
     if (JVMTI_ERROR_NONE != error) {
         printf("ERROR: Unable to SetEventCallbacks JVMTI!\n");
         return error;
     }
-    LOG("SET EVENT NOTIFICATION MODE");
+    DE_LOG("SET EVENT NOTIFICATION MODE");
     error = (*jvmti)->SetEventNotificationMode(jvmti, JVMTI_ENABLE, JVMTI_EVENT_CLASS_FILE_LOAD_HOOK, NULL);
     if (JVMTI_ERROR_NONE != error) {
         printf("ERROR: Unable to SetEventNotificationMode JVMTI!\n");
         return error;
     }
 
-    LOG("INIT JVMTI SUCCESS");
+    DE_LOG("INIT JVMTI SUCCESS");
     return JNI_OK;
 }
