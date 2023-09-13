@@ -71,19 +71,14 @@ public class JNIUtil implements Constants {
             logger.info("load library: " + file);
             System.loadLibrary(file);
         } else {
-            originLib = originLib + String.format(":%s:", libDirAbsPath);
-            System.setProperty(lib, originLib);
-            if (!deleteUrls()) {
-                return false;
-            }
-            String so = p.toFile().getName().toLowerCase();
+            String so = p.toFile().getAbsolutePath();
             if (!so.endsWith(SOFile)) {
                 logger.error("must be a so file");
                 return false;
             }
-            String file = so.split("\\.so")[0].trim();
-            logger.info("load library: " + file);
-            System.loadLibrary(file);
+            String outputName = p.toFile().getName().split("\\.so")[0].trim();
+            logger.info("load library: " + outputName);
+            System.load(so);
         }
         return true;
     }
@@ -93,7 +88,7 @@ public class JNIUtil implements Constants {
      *
      * @param filename dll/so file name in resources
      */
-    public static void extractDllSo(String filename,String dir,boolean load) {
+    public static void extractDllSo(String filename, String dir, boolean load) {
         InputStream is = null;
         try {
             is = JNIUtil.class.getClassLoader().getResourceAsStream(filename);
@@ -101,11 +96,18 @@ public class JNIUtil implements Constants {
                 logger.error("error dll name");
                 return;
             }
-            if(dir==null || dir.isEmpty()){
+            if (dir == null || dir.isEmpty()) {
                 dir = TempDir;
             }
-            Path dirPath = Files.createDirectories(Paths.get(dir));
-            Path outputFile = dirPath.resolve(filename);
+            Path targetDir = Paths.get(dir);
+            Path outputFile;
+
+            if (!Files.exists(targetDir)) {
+                Path dirPath = Files.createDirectories(targetDir);
+                outputFile = dirPath.resolve(filename);
+            } else {
+                outputFile = targetDir.resolve(filename);
+            }
 
             if (!Files.exists(outputFile)) {
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -117,7 +119,7 @@ public class JNIUtil implements Constants {
                 Files.write(outputFile, buffer.toByteArray());
                 logger.info("write file: " + outputFile.toAbsolutePath());
             }
-            if(load) {
+            if (load) {
                 boolean success = loadLib(outputFile.toAbsolutePath().toString());
                 if (!success) {
                     logger.error("load lib failed");

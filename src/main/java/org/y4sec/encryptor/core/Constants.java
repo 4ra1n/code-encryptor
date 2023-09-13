@@ -3,7 +3,9 @@ package org.y4sec.encryptor.core;
 public interface Constants {
     String Version = "0.0.1";
     String DecrypterDLL = "decrypter.dll";
+    String DecrypterSo = "libdecrypter.so";
     String EncryptorDLL = "encryptor.dll";
+    String EncryptorSO = "libencryptor.so";
     String TempDir = "code-encryptor-plus-temp";
     String NewFileSuffix = "encrypted";
     String DllFile = ".dll";

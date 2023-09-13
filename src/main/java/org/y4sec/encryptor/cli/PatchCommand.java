@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.y4sec.encryptor.core.Constants;
 import org.y4sec.encryptor.core.PatchHelper;
 import org.y4sec.encryptor.util.JNIUtil;
+import org.y4sec.encryptor.util.OSUtil;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,12 +23,26 @@ class PatchCommand implements Command, Constants {
     public void execute() {
         logger.info("patch jar: {}",jarPath);
         Path path = Paths.get(jarPath);
-        JNIUtil.extractDllSo(EncryptorDLL,null,true);
-        Path libPath = Paths.get(TempDir).resolve(EncryptorDLL);
+
+        if (!OSUtil.isArch64()) {
+            System.out.println("ONLY SUPPORT ARCH 64");
+            return;
+        }
+
+        Path libPath;
+        Path tmp = Paths.get(TempDir);
+        if (OSUtil.isWin()){
+            JNIUtil.extractDllSo(EncryptorDLL,null,false);
+            libPath = tmp.resolve(EncryptorDLL);
+        }else{
+            JNIUtil.extractDllSo(EncryptorSO,null,false);
+            libPath = tmp.resolve(EncryptorSO);
+        }
         if(packageName == null || packageName.isEmpty()){
             logger.error("need package name");
             return;
         }
+
         PatchHelper.patchJar(path,libPath,packageName);
     }
 }

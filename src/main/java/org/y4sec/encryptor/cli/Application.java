@@ -7,20 +7,6 @@ import org.y4sec.encryptor.core.Constants;
 public class Application implements Constants {
     public static void main(String[] args) {
         printLogo();
-        // OS
-        String os = System.getProperty("os.name").toLowerCase();
-        // ARCH
-        String bits = System.getProperty("sun.arch.data.model").toLowerCase();
-        if (!os.contains("windows") || !bits.equals("64")) {
-            System.out.println("ONLY SUPPORT WINDOWS X64");
-            System.out.printf("YOUR OS IS: %s - %s%n", os, bits);
-            return;
-        }
-        String javaVersion = System.getProperty("java.version");
-        if (!javaVersion.startsWith("1.8")) {
-            System.out.println("ONLY SUPPORT JAVA 8");
-            return;
-        }
 
         PatchCommand patchCommand = new PatchCommand();
         ExportCommand exportCommand = new ExportCommand();
