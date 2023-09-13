@@ -78,7 +78,7 @@ public class MainForm implements Constants {
             new Thread(() -> {
                 JNIUtil.extractDllSo(EncryptorDLL, null, true);
                 Path libPath = Paths.get(TempDir).resolve(EncryptorDLL);
-                PatchHelper.patchJar(Paths.get(jar), libPath, packageName);
+                PatchHelper.patchJar(Paths.get(jar), libPath, packageName,new byte[]{});
             }).start();
         });
 

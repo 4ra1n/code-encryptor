@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     org_y4sec_encryptor_core_CodeEncryptor
  * Method:    encrypt
- * Signature: ([BI)[B
+ * Signature: ([BI[B)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_org_y4sec_encryptor_core_CodeEncryptor_encrypt
-        (JNIEnv *, jclass, jbyteArray, jint);
+        (JNIEnv *, jclass, jbyteArray, jint, jbyteArray);
 
 #ifdef __cplusplus
 }

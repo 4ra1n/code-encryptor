@@ -17,11 +17,14 @@ class PatchCommand implements Command, Constants {
     private static final Logger logger = LogManager.getLogger();
     @Parameter(names = "--jar", description = "JAR File Path", required = true)
     String jarPath;
+
+    @Parameter(names = "--key", description = "KEY", required = true)
+    String key;
     @Parameter(names = "--package", description = "Encrypt Package Name", required = true)
     String packageName;
 
     public void execute() {
-        logger.info("patch jar: {}",jarPath);
+        logger.info("patch jar: {}", jarPath);
         Path path = Paths.get(jarPath);
 
         if (!OSUtil.isArch64()) {
@@ -29,20 +32,25 @@ class PatchCommand implements Command, Constants {
             return;
         }
 
+        if (key.length() != 16) {
+            System.out.println("KEY LENGTH MUST BE 16");
+            return;
+        }
+
         Path libPath;
         Path tmp = Paths.get(TempDir);
-        if (OSUtil.isWin()){
-            JNIUtil.extractDllSo(EncryptorDLL,null,false);
+        if (OSUtil.isWin()) {
+            JNIUtil.extractDllSo(EncryptorDLL, null, false);
             libPath = tmp.resolve(EncryptorDLL);
-        }else{
-            JNIUtil.extractDllSo(EncryptorSO,null,false);
+        } else {
+            JNIUtil.extractDllSo(EncryptorSO, null, false);
             libPath = tmp.resolve(EncryptorSO);
         }
-        if(packageName == null || packageName.isEmpty()){
+        if (packageName == null || packageName.isEmpty()) {
             logger.error("need package name");
             return;
         }
 
-        PatchHelper.patchJar(path,libPath,packageName);
+        PatchHelper.patchJar(path, libPath, packageName, key.getBytes());
     }
 }

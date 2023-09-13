@@ -18,7 +18,7 @@ public class PatchHelper implements Constants {
     private static final Logger logger = LogManager.getLogger();
 
     @SuppressWarnings("unchecked")
-    public static void patchJar(Path jarPath, Path libPath, String packageName) {
+    public static void patchJar(Path jarPath, Path libPath, String packageName,byte[] key) {
         logger.info("start patch jar");
 
         JNIUtil.loadLib(libPath.toAbsolutePath().toString());
@@ -53,7 +53,7 @@ public class PatchHelper implements Constants {
                 if (name.startsWith(packageName)) {
                     if (name.toLowerCase().endsWith(ClassFile)) {
                         try {
-                            bytes = CodeEncryptor.encrypt(bytes, bytes.length);
+                            bytes = CodeEncryptor.encrypt(bytes, bytes.length,key);
                         } catch (Exception e) {
                             logger.error("encrypt error: {}", e.toString());
                             return;

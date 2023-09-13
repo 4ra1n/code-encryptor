@@ -10,5 +10,5 @@ public class CodeEncryptor {
      * @param text ByteCode
      * @return Encrypted BytesCode
      */
-    public native static byte[] encrypt(byte[] text, int length);
+    public native static byte[] encrypt(byte[] text, int length, byte[] key);
 }
