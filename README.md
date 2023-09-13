@@ -34,19 +34,19 @@
 ## 构建
 
 编译环境：
-- Windows 64 位
+- Windows 11 / Ubuntu 22.04
 - JDK 8 / Maven
-- MSVC x64 / ml64
+- MSVC + ml64 (Windows) / gcc + nasm (Linux)
 - CMake 3.x
-- Python 3.x (非必要)
+- Python 3.x
 
-`native`目录使用`cmake`构建，生成`dll`移动到`resources`中使用`Maven`构建
+`native`目录使用`cmake`构建，生成`dll`和`so`移动到`resources`中使用`Maven`构建
 
 ## 快速开始
 
 加密解密部分使用`C`做一层加密，使用`汇编`二层加密，已提供编译好的`Release`版本`DLL`文件嵌入`Jar`包中
 
-仅支持`Windows 64位`/`JDK-8`环境，其他版本的`JDK`只需要更换`JNI.h`头文件重新编译，其他操作系统可能需要重写
+内置支持是`JDK-8`，其他版本的`JDK`只需要更换`JNI.h`头文件重新编译，新版本已支持`Windows`和`Linux`两个操作系统
 
 加密你的`Jar`包：（指定`Jar`包和`package`加密包名）
 
@@ -60,13 +60,13 @@
 java -jar code-encryptor-plus.jar export
 ```
 
-使用解密`DLL`启动`Jar`包：（使用`-agentlib`参数）
+使用解密`DLL`启动`Jar`包：（使用`-agentpath`参数）
 
 ```shell
-java -agentlib:D:\abs-path\decrypter=PACKAGE_NAME=com.your.pack --jar your-jar.jar
+java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack --jar your-jar.jar
 ```
 
-另外支持了简易的`GUI`版本，选择需要加密的`Jar`文件即可一键加密
+另外支持了简易的`GUI`版本，选择需要加密的`Jar`文件即可一键加密（仅支持`Windows`版）
 
 ![screenshot](img/001.png)
 

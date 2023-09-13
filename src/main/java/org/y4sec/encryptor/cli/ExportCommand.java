@@ -26,7 +26,7 @@ class ExportCommand implements Command, Constants {
         if (OSUtil.isWin()) {
             JNIUtil.extractDllSo(DecrypterDLL, outputPath, false);
             System.out.println("----------- ADD VM OPTIONS (WINDOWS) -----------");
-            System.out.println("java -agentlib:path-to-file=PACKAGE_NAME=xxx [other-params]");
+            System.out.println("java -agentpath:/path/to/decrypter.dll=PACKAGE_NAME=xxx [other-params]");
         } else {
             JNIUtil.extractDllSo(DecrypterSo, outputPath, false);
             System.out.println("----------- ADD VM OPTIONS (LINUX) -----------");
