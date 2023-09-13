@@ -6,8 +6,50 @@
 
 // PACKAGE
 char *PACKAGE_NAME;
+// KEY
+unsigned char *KEY;
 
-void internal(unsigned char *_data, int start) {
+unsigned char **split_string(const char *str, int *num_tokens, const char *sp) {
+    unsigned char **tokens = NULL;
+    char copy[100];
+    char *token;
+    int count = 0;
+    strncpy(copy, str, sizeof(copy));
+    copy[sizeof(copy) - 1] = '\0';
+    token = strtok(copy, sp);
+    while (token != NULL) {
+        count++;
+        token = strtok(NULL, sp);
+    }
+    tokens = (unsigned char **) malloc(count * sizeof(unsigned char *));
+    if (tokens == NULL) {
+        fprintf(stderr, "memory allocation failed\n");
+        return NULL;
+    }
+    strncpy(copy, str, sizeof(copy));
+    copy[sizeof(copy) - 1] = '\0';
+
+    token = strtok(copy, sp);
+    count = 0;
+    while (token != NULL) {
+        tokens[count] = (unsigned char *) malloc(strlen(token) + 1);
+        if (tokens[count] == NULL) {
+            fprintf(stderr, "memory allocation failed\n");
+            for (int i = 0; i < count; i++) {
+                free(tokens[i]);
+            }
+            free(tokens);
+            return NULL;
+        }
+        strcpy((char *) tokens[count], token);
+        count++;
+        token = strtok(NULL, sp);
+    }
+    *num_tokens = count;
+    return tokens;
+}
+
+void internal(unsigned char *_data, int start, unsigned char *key) {
     unsigned char first[4];
     for (int i = start; i < start + 4; i++) {
         first[i - start] = _data[i];
@@ -17,12 +59,20 @@ void internal(unsigned char *_data, int start) {
         second[i - start - 4] = _data[i];
     }
     uint32_t v[2] = {convert(first), convert(second)};
-    // key: Y4Sec-Team-4ra1n
-    // 59345365 632D5465 616D2D34 7261316E
+
+    printf("DECRYPT KEY: %s\n",key);
+    unsigned char *key_part1 = key;
+    unsigned char *key_part2 = key + 4;
+    unsigned char *key_part3 = key + 8;
+    unsigned char *key_part4 = key + 12;
+
     uint32_t const k[4] = {
-            (unsigned int) 0x65533459, (unsigned int) 0x65542d63,
-            (unsigned int) 0X342d6d61, (unsigned int) 0x6e316172,
+            (unsigned int) convert(key_part1),
+            (unsigned int) convert(key_part2),
+            (unsigned int) convert(key_part3),
+            (unsigned int) convert(key_part4),
     };
+
     tea_decrypt(v, k);
     unsigned char first_arr[4];
     unsigned char second_arr[4];
@@ -60,11 +110,11 @@ void JNICALL ClassDecryptHook(
             return;
         }
         // 1. {[10:14],[14:18]}
-        internal(_data,10);
+        internal(_data,10,KEY);
         // 2. {[18:22],[22:26]}
-        internal(_data,18);
+        internal(_data,18,KEY);
         // 3. {[26:30],[30:34]}
-        internal(_data,26);
+        internal(_data,26,KEY);
         // 4. asm encrypt
         decrypt((unsigned char *) _data, class_data_len);
     } else {
@@ -81,9 +131,6 @@ JNIEXPORT void JNICALL Agent_OnUnload(JavaVM *vm) {
 JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
     printf("PARAMS: %s\n", options);
 
-    const char *key = "PACKAGE_NAME";
-    char *value = NULL;
-
     // REPLACE . -> /
     char modified_str[256];
     size_t modified_str_size = sizeof(modified_str);
@@ -97,28 +144,54 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
         }
     }
 
-    // SPLIT A=B -> B
-    char *context;
-    char *token = strtok_s(modified_str, "=", &context);
-    while (token != NULL) {
-        if (strcmp(token, key) == 0) {
-            value = strtok_s(NULL, "=", &context);
-            break;
+    unsigned char *v1 = NULL;
+    unsigned char *v2 = NULL;
+    int num_tokens;
+    unsigned char **tokens = split_string(modified_str, &num_tokens, ",");
+    if (tokens != NULL) {
+        unsigned char *pack = tokens[0];
+        unsigned char *key = tokens[1];
+
+        tokens = split_string((char *) pack, &num_tokens, "=");
+        if (strcmp((char *) tokens[0], "PACKAGE_NAME") == 0) {
+            v1 = tokens[1];
+            printf("PACKAGE_NAME: %s\n", v1);
+            printf("LENGTH: %llu\n", strlen((char *) v1));
+        }else{
+            printf("ERROR");
+            return 0;
         }
-        token = strtok_s(NULL, "=", &context);
+
+        tokens = split_string((char *) key, &num_tokens, "=");
+        if (strcmp((char *) tokens[0], "KEY") == 0) {
+            v2 = tokens[1];
+            printf("KEY: %s\n", v2);
+            printf("LENGTH: %llu\n", strlen((char *) v2));
+        } else{
+            printf("ERROR");
+            return 0;
+        }
     }
 
-    if (value == NULL) {
+    if (v1 == NULL) {
         DE_LOG("NEED PACKAGE_NAME PARAMS\n");
         return 0;
     }
 
-    // SET PACKAGE_NAME
-    PACKAGE_NAME = (char *) malloc(strlen(value) + 1);
-    strcpy_s(PACKAGE_NAME, strlen(value) + 1, value);
+    if (v2 == NULL) {
+        DE_LOG("NEED KEY PARAMS\n");
+        return 0;
+    }
 
-    printf("PACKAGE: %s\n", PACKAGE_NAME);
-    printf("PACKAGE-LENGTH: %llu\n", strlen(PACKAGE_NAME));
+    // SET PACKAGE_NAME
+    PACKAGE_NAME = (char *) malloc(strlen((char *)v1));
+    strcpy(PACKAGE_NAME, (char *)v1);
+    printf("SET GLOBAL PACKAGE: %s\n",PACKAGE_NAME);
+
+    // SET KEY
+    KEY = (unsigned char *) malloc(16);
+    strcpy((char *)KEY, (char *)v2);
+    printf("SET GLOBAL KEY: %s\n",KEY);
 
     jvmtiEnv *jvmti;
     DE_LOG("INIT JVMTI ENVIRONMENT");
