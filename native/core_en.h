@@ -3,7 +3,7 @@
 
 #endif //NATIVE_CORE_EN_H
 
-#define LOG(msg) printf("[ENCRYPT] %s\n", msg)
+#define EN_LOG(msg) printf("[ENCRYPT] %s\n", msg)
 
 // SEE encrypt.asm
 extern void encrypt(unsigned char *, long);

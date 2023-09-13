@@ -52,21 +52,21 @@ JNIEXPORT jbyteArray JNICALL Java_org_y4sec_encryptor_core_CodeEncryptor_encrypt
     memcpy(chars, data, length);
     // 1. asm encrypt
     encrypt(chars, length);
-    LOG("ASM ENCRYPT FINISH");
+    EN_LOG("ASM ENCRYPT FINISH");
     // 2. tea encrypt
     if (length < 34) {
-        LOG("ERROR: BYTE CODE TOO SHORT");
+        EN_LOG("ERROR: BYTE CODE TOO SHORT");
         return text;
     }
     // {[10:14],[14:18]}
     internal(chars, 10);
-    LOG("TEA ENCRYPT #1");
+    EN_LOG("TEA ENCRYPT #1");
     // {[18:22],[22:26]}
     internal(chars, 18);
-    LOG("TEA ENCRYPT #2");
+    EN_LOG("TEA ENCRYPT #2");
     // {[26:30],[30:34]}
     internal(chars, 26);
-    LOG("TEA ENCRYPT #3");
+    EN_LOG("TEA ENCRYPT #3");
     (*env)->SetByteArrayRegion(env, text, 0, length, (jbyte *) chars);
     return text;
 }

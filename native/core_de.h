@@ -3,7 +3,7 @@
 
 #endif //NATIVE_CORE_DE_H
 
-#define LOG(msg) printf("[JVMTI-LOG] %s\n", msg)
+#define DE_LOG(msg) printf("[JVMTI-LOG] %s\n", msg)
 
 // SEE decrypt.asm
 extern void decrypt(unsigned char *, long);

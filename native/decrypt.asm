@@ -5,7 +5,10 @@ decrypt PROC
     push rbp
     mov rbp, rsp
     ; save
+    push rax
     push rbx
+    push rcx
+    push rdx
     push rsi
     push rdi
     ; char* str
@@ -53,7 +56,10 @@ magic:
     ; recover
     pop rdi
     pop rsi
+    pop rdx
+    pop rcx
     pop rbx
+    pop rax
     ; recover rbp
     pop rbp
     ret

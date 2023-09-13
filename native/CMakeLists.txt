@@ -179,5 +179,9 @@ else ()
             PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/decrypt_linux.obj
     )
 
+    target_link_libraries(decrypt_test
+            PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/encrypt_linux.obj
+    )
+
 endif ()
 
