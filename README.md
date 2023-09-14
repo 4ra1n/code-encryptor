@@ -61,6 +61,8 @@ java -jar code-encryptor-plus.jar export
 
 注意必须有两个参数`PACKAGE_NAME`和`KEY`
 
+注意：某些情况下可能第一次无法启动，重复使用命令启动即可
+
 ```shell
 java -XX:+DisableAttachMechanism -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-key --jar your-jar.jar
 ```

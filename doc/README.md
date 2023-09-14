@@ -58,6 +58,9 @@ java -jar code-encryptor-plus.jar export
 Launching the Jar Package with Decryption DLL/SO: (Using the `-agentpath` Parameter)
 
 Please note that you must provide two parameters: `PACKAGE_NAME` and `KEY`.
+
+Note: In some cases, the command may not start successfully the first time. Try running the command multiple times to resolve the issue.
+
 ```shell
 java -XX:+DisableAttachMechanism -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-key --jar your-jar.jar
 ```

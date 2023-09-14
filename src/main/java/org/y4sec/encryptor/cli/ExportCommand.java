@@ -26,11 +26,13 @@ class ExportCommand implements Command, Constants {
         if (OSUtil.isWin()) {
             JNIUtil.extractDllSo(DecrypterDLL, outputPath, false);
             System.out.println("----------- ADD VM OPTIONS (WINDOWS) -----------");
-            System.out.println("java -agentpath:/path/to/decrypter.dll=PACKAGE_NAME=xxx [other-params]");
+            System.out.println("java -XX:+DisableAttachMechanism " +
+                    "-agentpath:/path/to/decrypter.dll=PACKAGE_NAME=xxx,KEY=YOUR-KEY [other-params]");
         } else {
             JNIUtil.extractDllSo(DecrypterSo, outputPath, false);
             System.out.println("----------- ADD VM OPTIONS (LINUX) -----------");
-            System.out.println("java -agentpath:/path/to/libdecrypter.so=PACKAGE_NAME=xxx [other-params]");
+            System.out.println("java -XX:+DisableAttachMechanism " +
+                    "-agentpath:/path/to/libdecrypter.so=PACKAGE_NAME=xxx,KEY=YOUR-KEY [other-params]");
         }
     }
 }
