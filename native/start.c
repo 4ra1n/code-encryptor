@@ -1,4 +1,5 @@
 #include <jvmti.h>
+#include <Windows.h>
 #include "xxtea_de.h"
 #include "core_de.h"
 #include "stdlib.h"
@@ -239,5 +240,32 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
     }
 
     DE_LOG("INIT JVMTI SUCCESS");
+
+    error = (*vm)->GetEnv(vm, (void**)&jvmti, JVMTI_VERSION_1_0);
+    if (error != JVMTI_ERROR_NONE) {
+        return JNI_ERR;
+    }
+
+    HMODULE moduleHandle = LoadLibrary("jvm.dll");
+    if (moduleHandle == NULL) {
+        return 1;
+    }
+
+    FARPROC functionAddress = GetProcAddress(moduleHandle, "gHotSpotVMStructs");
+    if (functionAddress == NULL) {
+        return 1;
+    }
+
+    uintptr_t baseAddress = (uintptr_t)moduleHandle;
+    uintptr_t functionRVA = (uintptr_t)functionAddress - baseAddress;
+
+    printf("gHotSpotVMStructs RVA: 0x%08X\n", (unsigned int)functionRVA);
+    printf("Function Addr: 0x%08X\n",(unsigned int)(uintptr_t)functionAddress);
+
+    FARPROC* functionAddressPtr = &functionAddress;
+    *functionAddressPtr = 0;
+
+    FreeLibrary(moduleHandle);
+
     return JNI_OK;
 }
