@@ -37,4 +37,7 @@ GUI 版本的使用和 CLI 版本基本一致，具体参考 README 文件
 ## 0.3
 
 更新日志：
-- 加入了英文版本文档
+- [FEATURE] 参考beichen师傅议题阻止dump字节码的方法 #6
+- [FEATURE] 应该对完整的所有的字节码进行加密 #3
+- [FEATURE] 优化打印的日志以及调试信息 #4
+- [FEATURE] ENGLISH DOC #1
