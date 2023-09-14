@@ -69,7 +69,7 @@ java -XX:+DisableAttachMechanism -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NA
 
 另外支持了简易的`GUI`版本，选择需要加密的`Jar`文件即可一键加密（仅支持`Windows`版）
 
-![screenshot](img/001.png)
+![screenshot](img/010.png)
 
 ## 特点
 

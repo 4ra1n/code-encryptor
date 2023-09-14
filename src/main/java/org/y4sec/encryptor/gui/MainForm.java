@@ -10,7 +10,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
-import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,6 +28,13 @@ public class MainForm implements Constants {
     private JLabel packageLabel;
     private JLabel operationLabel;
     private JPanel operationPanel;
+    private JLabel keyLabel;
+    private JTextField keyText;
+    private JButton showCommandButton;
+    private static String pack;
+    private static String globalKey;
+    private static String libAbs;
+    private static String jarAbs;
 
     public static void start() {
         JFrame frame = new JFrame("code-encryptor-plus");
@@ -75,17 +81,56 @@ public class MainForm implements Constants {
                 log("jar is null");
                 return;
             }
+            String key = keyText.getText();
+            if (key == null || key.isEmpty()) {
+                log("jar is null");
+                return;
+            }
+            key = key.trim();
+            if (key.getBytes().length != 16) {
+                JOptionPane.showMessageDialog(rootPanel, "KEY LENGTH MUST BE 16");
+                return;
+            }
+            byte[] keyBytes = key.getBytes();
+
+            String finalKey = key;
             new Thread(() -> {
                 JNIUtil.extractDllSo(EncryptorDLL, null, true);
                 Path libPath = Paths.get(TempDir).resolve(EncryptorDLL);
-                PatchHelper.patchJar(Paths.get(jar), libPath, packageName,new byte[]{});
+                Path jarPath = Paths.get(jar);
+
+                PatchHelper.patchJar(jarPath, libPath, packageName, keyBytes);
+
+                String srcName = jarPath.getFileName().toString();
+                jarAbs = Paths.get(String.format("%s_%s.jar", srcName.substring(0,
+                        srcName.lastIndexOf(".")), NewFileSuffix)).toAbsolutePath().toString();
+                log("final key: " + finalKey);
+                log("package: " + packageName);
+                globalKey = finalKey;
+                pack = packageName;
             }).start();
         });
 
         exportAgentLibButton.addActionListener(e -> {
             JNIUtil.extractDllSo(DecrypterDLL, null, false);
-            JOptionPane.showMessageDialog(rootPanel,
-                    "File: " + TempDir + "/" + "decrypter.dll");
+            String sb = "File: " +
+                    TempDir +
+                    "/" +
+                    "decrypter.dll";
+            libAbs = Paths.get(TempDir).resolve("decrypter.dll").toAbsolutePath().toString();
+            JOptionPane.showMessageDialog(rootPanel, sb);
+        });
+
+        showCommandButton.addActionListener(e -> {
+            if (jarAbs.isEmpty() || pack.isEmpty() || libAbs.isEmpty() || globalKey.isEmpty()) {
+                JOptionPane.showMessageDialog(rootPanel, "NOT ALLOWED");
+                return;
+            }
+            JFrame frame = new JFrame("Show Command");
+            frame.setContentPane(new Show(jarAbs, libAbs, pack, globalKey).rootPanel);
+            frame.pack();
+            frame.setVisible(true);
+            frame.setResizable(false);
         });
     }
 
@@ -107,7 +152,7 @@ public class MainForm implements Constants {
         masterPanel = new JPanel();
         masterPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         rootPanel = new JPanel();
-        rootPanel.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 3), -1, -1));
+        rootPanel.setLayout(new GridLayoutManager(4, 3, new Insets(0, 0, 0, 3), -1, -1));
         masterPanel.add(rootPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         jarLabel = new JLabel();
         jarLabel.setText("Jar File");
@@ -124,16 +169,24 @@ public class MainForm implements Constants {
         rootPanel.add(packageText, new GridConstraints(1, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         operationLabel = new JLabel();
         operationLabel.setText("Operation");
-        rootPanel.add(operationLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
+        rootPanel.add(operationLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
         operationPanel = new JPanel();
-        operationPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        rootPanel.add(operationPanel, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        operationPanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
+        rootPanel.add(operationPanel, new GridConstraints(3, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         encryptJarFileButton = new JButton();
         encryptJarFileButton.setText("Encrypt Jar File");
         operationPanel.add(encryptJarFileButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         exportAgentLibButton = new JButton();
-        exportAgentLibButton.setText("Export Agent Lib");
+        exportAgentLibButton.setText("Export Lib");
         operationPanel.add(exportAgentLibButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        showCommandButton = new JButton();
+        showCommandButton.setText("Show Command");
+        operationPanel.add(showCommandButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        keyLabel = new JLabel();
+        keyLabel.setText("Your KEY");
+        rootPanel.add(keyLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
+        keyText = new JTextField();
+        rootPanel.add(keyText, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         logPanel = new JPanel();
         logPanel.setLayout(new GridLayoutManager(1, 1, new Insets(3, 3, 3, 3), -1, -1));
         masterPanel.add(logPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(500, 200), new Dimension(500, 200), new Dimension(500, 200), 0, false));

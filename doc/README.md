@@ -66,7 +66,7 @@ java -XX:+DisableAttachMechanism -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NA
 
 We also offer a straightforward GUI version that allows you to encrypt your chosen `Jar` file with a single click. (Available for Windows only)
 
-![screenshot](../img/001.png)
+![screenshot](../img/010.png)
 
 ## Features
 
