@@ -67,7 +67,7 @@ void internal(unsigned char *_data, int start, unsigned char *key) {
     }
     uint32_t v[2] = {convert(first), convert(second)};
 
-    printf("DECRYPT KEY: %s\n",key);
+    printf("DECRYPT KEY: %s\n", key);
     unsigned char *key_part1 = key;
     unsigned char *key_part2 = key + 4;
     unsigned char *key_part3 = key + 8;
@@ -117,11 +117,11 @@ void JNICALL ClassDecryptHook(
             return;
         }
         // 1. {[10:14],[14:18]}
-        internal(_data,10,KEY);
+        internal(_data, 10, KEY);
         // 2. {[18:22],[22:26]}
-        internal(_data,18,KEY);
+        internal(_data, 18, KEY);
         // 3. {[26:30],[30:34]}
-        internal(_data,26,KEY);
+        internal(_data, 26, KEY);
         // 4. asm encrypt
         decrypt((unsigned char *) _data, class_data_len);
     } else {
@@ -164,7 +164,7 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
             v1 = tokens[1];
             printf("PACKAGE_NAME: %s\n", v1);
             printf("LENGTH: %llu\n", strlen((char *) v1));
-        }else{
+        } else {
             printf("ERROR");
             return 0;
         }
@@ -174,7 +174,7 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
             v2 = tokens[1];
             printf("KEY: %s\n", v2);
             printf("LENGTH: %llu\n", strlen((char *) v2));
-        } else{
+        } else {
             printf("ERROR");
             return 0;
         }
@@ -191,14 +191,14 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
     }
 
     // SET PACKAGE_NAME
-    PACKAGE_NAME = (char *) malloc(strlen((char *)v1));
-    strcpy(PACKAGE_NAME, (char *)v1);
-    printf("SET GLOBAL PACKAGE: %s\n",PACKAGE_NAME);
+    PACKAGE_NAME = (char *) malloc(strlen((char *) v1));
+    strcpy(PACKAGE_NAME, (char *) v1);
+    printf("SET GLOBAL PACKAGE: %s\n", PACKAGE_NAME);
 
     // SET KEY
     KEY = (unsigned char *) malloc(16);
-    strcpy((char *)KEY, (char *)v2);
-    printf("SET GLOBAL KEY: %s\n",KEY);
+    strcpy((char *) KEY, (char *) v2);
+    printf("SET GLOBAL KEY: %s\n", KEY);
 
     jvmtiEnv *jvmti;
     DE_LOG("INIT JVMTI ENVIRONMENT");
@@ -241,7 +241,7 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
 
     DE_LOG("INIT JVMTI SUCCESS");
 
-    error = (*vm)->GetEnv(vm, (void**)&jvmti, JVMTI_VERSION_1_0);
+    error = (*vm)->GetEnv(vm, (void **) &jvmti, JVMTI_VERSION_1_0);
     if (error != JVMTI_ERROR_NONE) {
         return JNI_ERR;
     }
@@ -256,14 +256,13 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
         return 1;
     }
 
-    uintptr_t baseAddress = (uintptr_t)moduleHandle;
-    uintptr_t functionRVA = (uintptr_t)functionAddress - baseAddress;
+    uintptr_t baseAddress = (uintptr_t) moduleHandle;
+    uintptr_t functionRVA = (uintptr_t) functionAddress - baseAddress;
 
-    printf("gHotSpotVMStructs RVA: 0x%08X\n", (unsigned int)functionRVA);
-    printf("Function Addr: 0x%08X\n",(unsigned int)(uintptr_t)functionAddress);
+    printf("gHotSpotVMStructs RVA: 0x%08X\n", (unsigned int) functionRVA);
+    printf("Function Addr: 0x%08X\n", (unsigned int) (uintptr_t) functionAddress);
 
-    FARPROC* functionAddressPtr = &functionAddress;
-    *functionAddressPtr = 0;
+    *(size_t *) functionAddress = 0;
 
     FreeLibrary(moduleHandle);
 
