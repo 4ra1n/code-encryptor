@@ -25,7 +25,13 @@ Some hackers may found `sa-jdi` and `HSDB` to `dump` byte code.
 
 Refer to `Beichen` articles, prevent `gHotSpotVMStructs` function of `JVM`.
 
-![](../img/008.png)
+Support Windows:
+
+![WINDOWS](../img/008.png)
+
+Support Linux:
+
+![LINUX](../img/009.png)
 
 ## Quick Start
 
@@ -93,8 +99,6 @@ The `native` directory is built using `cmake`, generating `dll` and `so` files t
 ## Notes
 
 This approach is not suitable for scanning projects that involve launching the scanning of `class` files.
-
-The prevention strategy using `sa-jdi` is only tested on `Windows`.
 
 ## Refer
 

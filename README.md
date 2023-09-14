@@ -27,7 +27,13 @@
 
 我参考 `Beichen` 师傅议题的思路，从 `JVM` 里禁用了 `gHotSpotVMStructs` 函数
 
-![](img/008.png)
+支持 `Windows` 系统
+
+![WINDOWS](img/008.png)
+
+支持 `Linux` 系统
+
+![LINUX](img/009.png)
 
 ## 快速开始
 
@@ -94,8 +100,6 @@ java -XX:+DisableAttachMechanism -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NA
 ## 其他
 
 不适用于启动扫描 `class` 的项目
-
-防止 `sa-jdi` 的思路仅在 `windows` 中测试
 
 ## 参考
 
