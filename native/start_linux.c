@@ -1,4 +1,5 @@
 #include <jvmti.h>
+#include <dlfcn.h>
 #include "xxtea_de.h"
 #include "core_de.h"
 #include "stdlib.h"
@@ -66,11 +67,10 @@ void internal(unsigned char *_data, int start) {
     }
     uint32_t v[2] = {convert(first), convert(second)};
 
-    printf("DECRYPT KEY: %s\n",KEY);
-    unsigned char *key_part1 = (unsigned char *)KEY;
-    unsigned char *key_part2 = (unsigned char *)KEY + 4;
-    unsigned char *key_part3 = (unsigned char *)KEY + 8;
-    unsigned char *key_part4 = (unsigned char *)KEY + 12;
+    unsigned char *key_part1 = (unsigned char *) KEY;
+    unsigned char *key_part2 = (unsigned char *) KEY + 4;
+    unsigned char *key_part3 = (unsigned char *) KEY + 8;
+    unsigned char *key_part4 = (unsigned char *) KEY + 12;
 
     uint32_t const k[4] = {
             (unsigned int) convert(key_part1),
@@ -112,16 +112,19 @@ void JNICALL ClassDecryptHook(
         for (int i = 0; i < class_data_len; i++) {
             _data[i] = class_data[i];
         }
-        if (class_data_len < 34) {
+
+        if (class_data_len < 18) {
             return;
         }
-        // 1. {[10:14],[14:18]}
-        internal(_data,10);
-        // 2. {[18:22],[22:26]}
-        internal(_data,18);
-        // 3. {[26:30],[30:34]}
-        internal(_data,26);
-        // 4. asm encrypt
+
+        DE_LOG("START DECRYPT");
+        // 1. all xxtea
+        int total = (class_data_len - 10) / 8;
+        for (int i = 0; i < total; i++) {
+            internal(_data, 10 + i * 8);
+        }
+
+        // 2. asm encrypt
         decrypt((unsigned char *) _data, class_data_len);
     } else {
         for (int i = 0; i < class_data_len; i++) {
@@ -163,9 +166,9 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
             printf("PACKAGE_NAME: %s\n", v1);
             printf("LENGTH: %lu\n", strlen((char *) v1));
             PACKAGE_NAME = (char *) malloc(strlen((char *) v1));
-            strcpy(PACKAGE_NAME, (char *)v1);
-            printf("SET GLOBAL PACKAGE: %s\n",PACKAGE_NAME);
-        }else{
+            strcpy(PACKAGE_NAME, (char *) v1);
+            printf("SET GLOBAL PACKAGE: %s\n", PACKAGE_NAME);
+        } else {
             printf("ERROR");
             return 0;
         }
@@ -176,9 +179,9 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
             printf("KEY: %s\n", v2);
             printf("LENGTH: %lu\n", strlen((char *) v2));
             KEY = (char *) malloc(strlen((char *) v2));
-            strcpy(KEY, (char *)v2);
-            printf("SET GLOBAL KEY: %s\n",KEY);
-        } else{
+            strcpy(KEY, (char *) v2);
+            printf("SET GLOBAL KEY: %s\n", KEY);
+        } else {
             printf("ERROR");
             return 0;
         }
@@ -234,5 +237,24 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
     }
 
     DE_LOG("INIT JVMTI SUCCESS");
+
+    void *libjvm = dlopen("libjvm.so", RTLD_LAZY);
+    if (libjvm == NULL) {
+        fprintf(stderr, "Failed to load libjvm.so: %s\n", dlerror());
+        DE_LOG("DLOPEN ERROR");
+        return 1;
+    }
+    void (*gHotSpotVMStructs)() = dlsym(libjvm, "gHotSpotVMStructs");
+    if (gHotSpotVMStructs == NULL) {
+        fprintf(stderr, "Failed to find gHotSpotVMStructs function: %s\n", dlerror());
+        DE_LOG("DLSYM ERROR");
+        dlclose(libjvm);
+        return 1;
+    }
+    printf("gHotSpotVMStructs function address: %p\n", gHotSpotVMStructs);
+    *(size_t *) gHotSpotVMStructs = 0;
+    dlclose(libjvm);
+    DE_LOG("HACK JVM FINISH");
+
     return JNI_OK;
 }

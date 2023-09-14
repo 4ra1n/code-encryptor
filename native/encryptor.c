@@ -57,11 +57,13 @@ JNIEXPORT jbyteArray JNICALL Java_org_y4sec_encryptor_core_CodeEncryptor_encrypt
     jbyte *data = (*env)->GetByteArrayElements(env, text, NULL);
     unsigned char *chars = (unsigned char *) malloc(length);
     memcpy(chars, data, length);
+
     // 1. asm encrypt
     encrypt(chars, length);
     EN_LOG("ASM ENCRYPT FINISH");
+
     // 2. tea encrypt
-    if (length < 34) {
+    if (length < 18) {
         EN_LOG("ERROR: BYTE CODE TOO SHORT");
         return text;
     }
@@ -71,15 +73,12 @@ JNIEXPORT jbyteArray JNICALL Java_org_y4sec_encryptor_core_CodeEncryptor_encrypt
     memcpy(tea_key, j_tea_key, 16);
     printf("KEY: %s\n", tea_key);
 
-    // {[10:14],[14:18]}
-    internal(chars, 10, tea_key);
-    EN_LOG("TEA ENCRYPT #1");
-    // {[18:22],[22:26]}
-    internal(chars, 18, tea_key);
-    EN_LOG("TEA ENCRYPT #2");
-    // {[26:30],[30:34]}
-    internal(chars, 26, tea_key);
-    EN_LOG("TEA ENCRYPT #3");
+    EN_LOG("ALL TEA ENCRYPT");
+    int total = (length - 10) / 8;
+    for (int i = 0; i < total; i++) {
+        internal(chars, 10 + i * 8,tea_key);
+    }
+
     (*env)->SetByteArrayRegion(env, text, 0, length, (jbyte *) chars);
     return text;
 }
