@@ -14,11 +14,22 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * Patch core class
+ */
 public class PatchHelper implements Constants {
     private static final Logger logger = LogManager.getLogger();
 
+    /**
+     * Patch a jar
+     *
+     * @param jarPath     jar path
+     * @param libPath     encrypt lib path
+     * @param packageName encrypt package name
+     * @param key         encrypt key
+     */
     @SuppressWarnings("unchecked")
-    public static void patchJar(Path jarPath, Path libPath, String packageName,byte[] key) {
+    public static void patchJar(Path jarPath, Path libPath, String packageName, byte[] key) {
         logger.info("start patch jar");
 
         JNIUtil.loadLib(libPath.toAbsolutePath().toString());
@@ -27,6 +38,7 @@ public class PatchHelper implements Constants {
         try {
             File srcFile = jarPath.toFile();
             String srcName = srcFile.getName();
+            // rename *.jar -> *_encrypted.jar
             String outputFileName = String.format("%s_%s.jar",
                     srcName.substring(0, srcName.lastIndexOf(".")), NewFileSuffix);
             File dstFile = new File(outputFileName);
@@ -50,10 +62,11 @@ public class PatchHelper implements Constants {
                 byte[] bytes = bao.toByteArray();
 
                 String name = entry.getName();
+                // encrypt target class
                 if (name.startsWith(packageName)) {
                     if (name.toLowerCase().endsWith(ClassFile)) {
                         try {
-                            bytes = CodeEncryptor.encrypt(bytes, bytes.length,key);
+                            bytes = CodeEncryptor.encrypt(bytes, bytes.length, key);
                         } catch (Exception e) {
                             logger.error("encrypt error: {}", e.toString());
                             return;

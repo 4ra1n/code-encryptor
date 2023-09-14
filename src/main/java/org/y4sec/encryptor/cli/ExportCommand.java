@@ -8,9 +8,15 @@ import org.y4sec.encryptor.core.Constants;
 import org.y4sec.encryptor.util.JNIUtil;
 import org.y4sec.encryptor.util.OSUtil;
 
+/**
+ * Export dll so from resources
+ */
 @Parameters(commandDescription = "Export Command")
 class ExportCommand implements Command, Constants {
     private static final Logger logger = LogManager.getLogger();
+    /**
+     * Output Directory
+     */
     @Parameter(names = "--output", description = "Output File Path")
     @SuppressWarnings("unused")
     private String outputPath;

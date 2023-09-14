@@ -3,6 +3,9 @@ package org.y4sec.encryptor.gui;
 import com.formdev.flatlaf.FlatDarkLaf;
 import org.y4sec.encryptor.util.OSUtil;
 
+/**
+ * GUI core class
+ */
 public class GUIMain {
     public static void main(String[] args) {
         if (OSUtil.isWin() && OSUtil.isArch64()) {

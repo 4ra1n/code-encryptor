@@ -3,7 +3,9 @@ package org.y4sec.encryptor.cli;
 import com.beust.jcommander.JCommander;
 import org.y4sec.encryptor.core.Constants;
 
-
+/**
+ * Application
+ */
 public class Application implements Constants {
     public static void main(String[] args) {
         printLogo();
@@ -37,6 +39,9 @@ public class Application implements Constants {
         }
     }
 
+    /**
+     * Print LOGO
+     */
     private static void printLogo() {
         System.out.println("___________                                   __                \n" +
                 "\\_   _____/ ____   ___________ ___.__._______/  |_  ___________ \n" +

@@ -12,14 +12,25 @@ import org.y4sec.encryptor.util.OSUtil;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Core method
+ */
 @Parameters(commandDescription = "Patch Command")
 class PatchCommand implements Command, Constants {
     private static final Logger logger = LogManager.getLogger();
+    /**
+     * Input jar file
+     */
     @Parameter(names = "--jar", description = "JAR File Path", required = true)
     String jarPath;
-
+    /**
+     * Encrypt KEY
+     */
     @Parameter(names = "--key", description = "KEY", required = true)
     String key;
+    /**
+     * Encrypt package name (such as a.b.c)
+     */
     @Parameter(names = "--package", description = "Encrypt Package Name", required = true)
     String packageName;
 
@@ -39,6 +50,7 @@ class PatchCommand implements Command, Constants {
 
         Path libPath;
         Path tmp = Paths.get(TempDir);
+        // extract encrypt dll and load it
         if (OSUtil.isWin()) {
             JNIUtil.extractDllSo(EncryptorDLL, null, false);
             libPath = tmp.resolve(EncryptorDLL);
@@ -51,6 +63,7 @@ class PatchCommand implements Command, Constants {
             return;
         }
 
+        // do patch
         PatchHelper.patchJar(path, libPath, packageName, key.getBytes());
     }
 }

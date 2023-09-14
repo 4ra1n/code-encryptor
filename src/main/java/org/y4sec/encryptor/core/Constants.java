@@ -1,5 +1,8 @@
 package org.y4sec.encryptor.core;
 
+/**
+ * Constants
+ */
 public interface Constants {
     String Version = "0.0.1";
     String DecrypterDLL = "decrypter.dll";
