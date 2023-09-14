@@ -17,6 +17,16 @@ Apart from retaining the `Magic` part at the beginning, the rest becomes unrecog
 
 ![hex](../img/003.png)
 
+Use some param to prevent `Java Agent` to `dump` byte code.
+
+![](../img/007.png)
+
+Some hackers may found `sa-jdi` and `HSDB` to `dump` byte code.
+
+Refer to `Beichen` articles, prevent `gHotSpotVMStructs` function of `JVM`.
+
+![](../img/008.png)
+
 ## Quick Start
 
 The encryption and decryption process involves two layers of encryption: the first layer in `C` and the second layer in `assembly`. Precompiled `Release` versions of `DLL/SO` files are included in the `Jar` package.
@@ -43,7 +53,7 @@ Launching the Jar Package with Decryption DLL/SO: (Using the `-agentpath` Parame
 
 Please note that you must provide two parameters: `PACKAGE_NAME` and `KEY`.
 ```shell
-java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-key --jar your-jar.jar
+java -XX:+DisableAttachMechanism -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-key --jar your-jar.jar
 ```
 
 ![](../img/006.png)
@@ -61,6 +71,7 @@ Compared to publicly available articles/code online, this project has several ad
 - The original article's code was only at a demo level, making it difficult for users to test and use directly.
 - The original article did not include specific encryption algorithms; it only involved simple operations and needed enhancement.
 - The original article's code had some bugs and room for optimization.
+- Use some magic that hackers can not dump any byte code.
 
 The current encryption and decryption algorithm includes:
 
@@ -81,19 +92,16 @@ The `native` directory is built using `cmake`, generating `dll` and `so` files t
 
 ## Notes
 
-This solution is not suitable for `SpringBoot` scenarios due to two issues:
-- `SpringBoot` does not allow the compression of `lib` dependencies (there are workarounds).
-- `SpringBoot` startup scanning will analyze `class` files, leading to errors when encrypted.
+This approach is not suitable for scanning projects that involve launching the scanning of `class` files.
 
-Two solutions are available online, which you can refer to:
+The prevention strategy using `sa-jdi` is only tested on `Windows`.
 
-Reference: https://zhuanlan.zhihu.com/p/545268749
+## Refer
 
-Similarly, this encryption method cannot be used with code that scans `class` files during startup.
+Thanks to `BeichenDream`
 
-## References
-
-Thanks to the following projects or articles for providing insights:
+Thanks for these articles:
+- https://mp.weixin.qq.com/s/89Bmvy_uY97TZm3vR9lyWw
 - https://juejin.cn/post/6844903487784894477
 - https://github.com/sea-boat/ByteCodeEncrypt
 

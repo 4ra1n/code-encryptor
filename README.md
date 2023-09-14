@@ -19,6 +19,16 @@
 
 ![hex](img/003.png)
 
+使用指定参数启动即可禁止 `Java Agent` 动态 `dump` 字节码
+
+![](img/007.png)
+
+对于更资深的黑客，他们会想到 `sa-jdi` 的 `HSDB` 来 `dump` 字节码
+
+我参考 `Beichen` 师傅议题的思路，从 `JVM` 里禁用了 `gHotSpotVMStructs` 函数
+
+![](img/008.png)
+
 ## 快速开始
 
 加密解密部分使用`C`做一层加密，使用`汇编`二层加密，已提供编译好的`Release`版本`DLL/SO`文件嵌入`Jar`包中
@@ -46,7 +56,7 @@ java -jar code-encryptor-plus.jar export
 注意必须有两个参数`PACKAGE_NAME`和`KEY`
 
 ```shell
-java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-key --jar your-jar.jar
+java -XX:+DisableAttachMechanism -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-key --jar your-jar.jar
 ```
 
 ![](img/006.png)
@@ -63,6 +73,7 @@ java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-ke
 - 原文章的代码仅是`Demo`级别，无法直接上手测试和使用
 - 原文章没有加入具体的加密算法，仅是简单的运算，需要加强
 - 原文章的代码存在一些`BUG`和优化空间
+- 使用某些魔法操作，使字节码无法被 `dump` 进一步保证安全
 
 目前的加密解密算法：
 - 汇编实现的多次位运算，交换字节等
@@ -82,18 +93,15 @@ java -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NAME=com.your.pack,KEY=your-ke
 
 ## 其他
 
-不适用于`SpringBoot`场景，存在两个问题：
-- `SpringBoot`不允许压缩`lib`依赖（这个有解决办法）
-- `SpringBoot`启动扫描会分析`class`由于加密报错
+不适用于启动扫描 `class` 的项目
 
-网上提供了两种办法，可以参考
-
-参考：https://zhuanlan.zhihu.com/p/545268749
-
-类似地，启动扫描`class`的代码是无法使用这种加密的
+防止 `sa-jdi` 的思路仅在 `windows` 中测试
 
 ## 参考
 
+特别感谢 `BeichenDream` 师傅
+
 感谢以下项目或文章提供的思路：
+- https://mp.weixin.qq.com/s/89Bmvy_uY97TZm3vR9lyWw
 - https://juejin.cn/post/6844903487784894477
 - https://github.com/sea-boat/ByteCodeEncrypt
