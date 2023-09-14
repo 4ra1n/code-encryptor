@@ -22,7 +22,7 @@ if (WIN32)
     add_custom_target(
             native_encrypt_asm ALL
             COMMAND ml64 /c /Fo${CMAKE_CURRENT_BINARY_DIR}/native_encrypt_asm.obj
-            ${CMAKE_CURRENT_SOURCE_DIR}/encrypt.asm
+            ${CMAKE_CURRENT_SOURCE_DIR}/encrypt_windows.asm
             BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/native_encrypt_asm.obj
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -30,7 +30,7 @@ if (WIN32)
     add_custom_target(
             native_decrypt_asm ALL
             COMMAND ml64 /c /Fo${CMAKE_CURRENT_BINARY_DIR}/native_decrypt_asm.obj
-            ${CMAKE_CURRENT_SOURCE_DIR}/decrypt.asm
+            ${CMAKE_CURRENT_SOURCE_DIR}/decrypt_windows.asm
             BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/native_decrypt_asm.obj
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -51,7 +51,7 @@ if (WIN32)
     add_library(
             decrypter SHARED
             core_de.h
-            start.c
+            start_windows.c
 
             xxtea_common.c
             xxtea_common.h

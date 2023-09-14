@@ -5,5 +5,5 @@
 
 #define DE_LOG(msg) printf("[JVMTI-LOG] %s\n", msg)
 
-// SEE decrypt.asm
+// SEE decrypt_windows.asm
 extern void decrypt(unsigned char *, long);

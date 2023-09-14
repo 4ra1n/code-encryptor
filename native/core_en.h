@@ -5,5 +5,5 @@
 
 #define EN_LOG(msg) printf("[ENCRYPT] %s\n", msg)
 
-// SEE encrypt.asm
+// SEE encrypt_windows.asm
 extern void encrypt(unsigned char *, long);

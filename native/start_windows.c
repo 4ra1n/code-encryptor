@@ -67,7 +67,6 @@ void internal(unsigned char *_data, int start, unsigned char *key) {
     }
     uint32_t v[2] = {convert(first), convert(second)};
 
-    printf("DECRYPT KEY: %s\n", key);
     unsigned char *key_part1 = key;
     unsigned char *key_part2 = key + 4;
     unsigned char *key_part3 = key + 8;
@@ -113,16 +112,18 @@ void JNICALL ClassDecryptHook(
         for (int i = 0; i < class_data_len; i++) {
             _data[i] = class_data[i];
         }
-        if (class_data_len < 34) {
+        if (class_data_len < 18) {
             return;
         }
-        // 1. {[10:14],[14:18]}
-        internal(_data, 10, KEY);
-        // 2. {[18:22],[22:26]}
-        internal(_data, 18, KEY);
-        // 3. {[26:30],[30:34]}
-        internal(_data, 26, KEY);
-        // 4. asm encrypt
+
+        DE_LOG("START DECRYPT");
+        // 1. all xxtea
+        int total = (class_data_len - 10) / 8;
+        for (int i = 0; i < total; i++) {
+            internal(_data, 10 + i * 8, KEY);
+        }
+
+        // 2. asm encrypt
         decrypt((unsigned char *) _data, class_data_len);
     } else {
         for (int i = 0; i < class_data_len; i++) {
@@ -259,12 +260,14 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
     uintptr_t baseAddress = (uintptr_t) moduleHandle;
     uintptr_t functionRVA = (uintptr_t) functionAddress - baseAddress;
 
-    printf("gHotSpotVMStructs RVA: 0x%08X\n", (unsigned int) functionRVA);
-    printf("Function Addr: 0x%08X\n", (unsigned int) (uintptr_t) functionAddress);
+    printf("gHotSpotVMStructs RVA: 0x%016llx\n", functionRVA);
+    printf("Function Addr: 0x%016llx\n",  (uintptr_t) functionAddress);
 
     *(size_t *) functionAddress = 0;
 
     FreeLibrary(moduleHandle);
+
+    DE_LOG("HACK JVM FINISH");
 
     return JNI_OK;
 }
