@@ -192,3 +192,16 @@ else ()
 
 endif ()
 
+execute_process(
+        COMMAND python main.py
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        RESULT_VARIABLE result
+        OUTPUT_VARIABLE output
+)
+
+if(result EQUAL 0)
+    message("BUILD FINISH")
+else()
+    message("BUILD ERROR")
+endif()
+
