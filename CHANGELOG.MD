@@ -52,3 +52,15 @@ GUI 版本的使用和 CLI 版本基本一致，具体参考 README 文件
 - export 命令用于导出对应的 dll 解密库
 
 GUI 版本的使用和 CLI 版本基本一致，具体参考 README 文件
+
+## 0.4
+
+更新日志：
+- 优化`native`层的代码
+- 优化`README`说明文档
+
+提供 GUI 和 CLI 两个版本，CLI 版本分为 patch 和 export 两个命令
+- patch 命令用于加密输入的 jar 包
+- export 命令用于导出对应的 dll/so 解密库
+
+GUI 版本的使用和 CLI 版本基本一致，具体参考 README 文件

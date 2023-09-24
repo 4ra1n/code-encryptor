@@ -35,7 +35,7 @@ Support Linux:
 
 ## Quick Start
 
-The encryption and decryption process involves two layers of encryption: the first layer in `C` and the second layer in `assembly`. Precompiled `Release` versions of `DLL/SO` files are included in the `Jar` package.
+The encryption and decryption process involves two layers of encryption: the first layer in `C` and the second layer in bitwise. Precompiled `Release` versions of `DLL/SO` files are included in the `Jar` package.
 
 Built-in support is for `JDK-8`, but other versions of `JDK` only require replacing the `JNI.h` header file and recompiling. The new version also supports both `Windows` and `Linux`.
 
@@ -84,7 +84,7 @@ Compared to publicly available articles/code online, this project has several ad
 
 The current encryption and decryption algorithm includes:
 
-- Multiple bitwise operations implemented in assembly, byte swapping, and more.
+- Multiple bitwise operations, byte swapping, and more.
 - Based on the `XXTEA` algorithm with multiple rounds of encryption.
 - Supports custom keys for further protection.
 
@@ -101,7 +101,7 @@ The `native` directory is built using `cmake`, generating `dll` and `so` files t
 
 ## Notes
 
-This approach is not suitable for scanning projects that involve launching the scanning of `class` files.
+This approach is not suitable for scanning projects that involve launching the scanning of `class` files. (Such as `SpringBoot`)
 
 ## Refer
 

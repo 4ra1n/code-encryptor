@@ -37,7 +37,7 @@
 
 ## 快速开始
 
-加密解密部分使用`C`做一层加密，使用`汇编`二层加密，已提供编译好的`Release`版本`DLL/SO`文件嵌入`Jar`包中
+加密解密部分使用`C`做一层加密，使用位运算二层加密，已提供编译好的`Release`版本`DLL/SO`文件嵌入`Jar`包中
 
 内置支持是`JDK-8`，其他版本的`JDK`只需要更换`JNI.h`头文件重新编译，新版本已支持`Windows`和`Linux`
 
@@ -84,7 +84,7 @@ java -XX:+DisableAttachMechanism -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NA
 - 使用某些魔法操作，使字节码无法被 `dump` 进一步保证安全
 
 目前的加密解密算法：
-- 汇编实现的多次位运算，交换字节等
+- 多次位运算，交换字节等
 - 基于`XXTEA`算法，多轮加密
 - 支持自定义密钥，进一步保护
 
@@ -97,11 +97,11 @@ java -XX:+DisableAttachMechanism -agentpath:D:\abs-path\decrypter.dll=PACKAGE_NA
 - CMake 3.x
 - Python 3.x
 
-`native`目录使用`cmake`构建，生成`dll`和`so`移动到`resources`中使用`Maven`构建
+`native`目录使用`cmake`构建，生成`dll`和`so`移动到`resources`中使用`Maven`构建`Java`层代码
 
 ## 其他
 
-不适用于启动扫描 `class` 的项目
+不适用于启动扫描 `class` 的项目（典型的项目比如`SpringBoot`）
 
 ## 参考
 
