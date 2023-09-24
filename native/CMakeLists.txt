@@ -15,7 +15,7 @@ include_directories(${JNI_INCLUDE_DIRS})
 ################ JNI CONFIG END ##################
 
 if (WIN32)
-    MESSAGE("THIS IS WINDOWS")
+    MESSAGE("BUILD WINDOWS")
 
     enable_language(ASM_MASM)
 
@@ -38,8 +38,8 @@ if (WIN32)
     add_library(
             encryptor SHARED
             core_en.h
-            encryptor.h
-            encryptor.c
+            jni_encryptor.h
+            jni_encryptor.c
 
             xxtea_common.c
             xxtea_common.h
@@ -106,7 +106,7 @@ if (WIN32)
     )
 
 else ()
-    MESSAGE("THIS IS LINUX")
+    MESSAGE("BUILD LINUX")
 
     enable_language(ASM_NASM)
 
@@ -131,8 +131,8 @@ else ()
     add_library(
             encryptor SHARED
             core_en.h
-            encryptor.h
-            encryptor.c
+            jni_encryptor.h
+            jni_encryptor.c
 
             xxtea_common.c
             xxtea_common.h

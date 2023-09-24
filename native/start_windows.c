@@ -1,9 +1,10 @@
 #include <jvmti.h>
-#include <Windows.h>
+#include <windows.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "xxtea_de.h"
 #include "core_de.h"
-#include "stdlib.h"
-#include "string.h"
 
 // PACKAGE
 char *PACKAGE_NAME;
@@ -261,7 +262,7 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
     uintptr_t functionRVA = (uintptr_t) functionAddress - baseAddress;
 
     printf("gHotSpotVMStructs RVA: 0x%016llx\n", functionRVA);
-    printf("Function Addr: 0x%016llx\n",  (uintptr_t) functionAddress);
+    printf("Function Addr: 0x%016llx\n", (uintptr_t) functionAddress);
 
     *(size_t *) functionAddress = 0;
 

@@ -1,9 +1,10 @@
 #include <jvmti.h>
 #include <dlfcn.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "xxtea_de.h"
 #include "core_de.h"
-#include "stdlib.h"
-#include "string.h"
 
 // PACKAGE
 char *PACKAGE_NAME;

@@ -1,6 +1,7 @@
+#include <stdio.h>
+
 #include "core_de.h"
 #include "core_en.h"
-#include "stdio.h"
 
 void printHex(const unsigned char *arr, int length) {
     for (int i = 0; i < length; i++) {
@@ -15,8 +16,8 @@ int main() {
             0x00, 0x00, 0x00, 0x05,
             0x01, 0x02, 0x03, 0x04,
     };
-    encrypt(code,12);
-    printHex(code,12);
-    decrypt(code,12);
-    printHex(code,12);
+    encrypt(code, 12);
+    printHex(code, 12);
+    decrypt(code, 12);
+    printHex(code, 12);
 }

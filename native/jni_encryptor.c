@@ -1,8 +1,8 @@
-#include "encryptor.h"
-#include "xxtea_en.h"
+#include <string.h>
+#include <stdlib.h>
 
-#include "string.h"
-#include "stdlib.h"
+#include "jni_encryptor.h"
+#include "xxtea_en.h"
 #include "core_en.h"
 
 void internal(unsigned char *chars, int start, unsigned char *key) {
@@ -76,7 +76,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_y4sec_encryptor_core_CodeEncryptor_encrypt
     EN_LOG("ALL TEA ENCRYPT");
     int total = (length - 10) / 8;
     for (int i = 0; i < total; i++) {
-        internal(chars, 10 + i * 8,tea_key);
+        internal(chars, 10 + i * 8, tea_key);
     }
 
     (*env)->SetByteArrayRegion(env, text, 0, length, (jbyte *) chars);
