@@ -1,0 +1,38 @@
+name: linux action
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: environment init
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ca-certificates
+          sudo apt-get install zip unzip wget ninja-build gcc g++ openjdk-8-jdk nasm python3 execstack
+
+      - name: get cmake
+        run: |
+          wget https://cmake.org/files/v3.28/cmake-3.28.0-linux-x86_64.tar.gz
+          tar -zxvf cmake-3.28.0-linux-x86_64.tar.gz
+
+      - name: build
+        run: |
+          cd native
+          ../cmake-3.28.0-linux-x86_64/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B build-release
+          ../cmake-3.28.0-linux-x86_64/bin/cmake --build build-release --target all
+          python3 main.py
+          zip -r build-linux.zip target/*
+
+      - name: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: native/build-linux.zip
