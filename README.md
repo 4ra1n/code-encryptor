@@ -1,5 +1,7 @@
 # code-encryptor
 
+## 该项目已集成到：https://github.com/jar-analyzer/jar-obfuscator
+
 [English Doc](doc/README-en.md)
 
 [![](https://img.shields.io/github/v/release/4ra1n/code-encryptor)](https://github.com/4ra1n/code-encryptor/releases/latest)
